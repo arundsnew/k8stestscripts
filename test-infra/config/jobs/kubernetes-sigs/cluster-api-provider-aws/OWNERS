@@ -1,0 +1,28 @@
+# See the OWNERS docs at https://go.k8s.io/owners
+
+reviewers:
+- chuckha
+- davidewatson
+- detiber
+- d-nishi
+- enxebre
+- ingvagabund
+- kris-nova
+- luxas
+- ncdc
+- randomvariable
+- timothysc
+- vincepri
+approvers:
+- chuckha
+- davidewatson
+- detiber
+- d-nishi
+- enxebre
+- ingvagabund
+- kris-nova
+- luxas
+- ncdc
+- randomvariable
+- timothysc
+- vincepri

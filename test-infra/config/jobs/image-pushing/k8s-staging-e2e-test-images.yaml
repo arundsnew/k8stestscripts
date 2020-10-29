@@ -1,0 +1,66 @@
+postsubmits:
+  # This is the github repo we'll build from. This block needs to be repeated
+  # for each repo.
+  kubernetes/kubernetes:
+    # The name should be changed to match the repo name above
+    - name: post-kubernetes-push-e2e-test-images
+      cluster: k8s-infra-prow-build-trusted
+      annotations:
+        # This is the name of some testgrid dashboard to report to.
+        # If this is the first one for your sig, you may need to create one
+        testgrid-dashboards: sig-testing-images
+      decorate: true
+      # we only need to run if the test images have been changed.
+      run_if_changed: '^test\/images\/'
+      # this causes the job to only run on the master branch. Remove it if your
+      # job makes sense on every branch (unless it's setting a `latest` tag it
+      # probably does).
+      branches:
+        - ^master$
+      spec:
+        serviceAccountName: gcb-builder
+        containers:
+          - image: gcr.io/k8s-testimages/image-builder:v20200901-ab141a0
+            command:
+              - /run.sh
+            args:
+              # this is the project GCB will run in, which is the same as the GCR
+              # images are pushed to.
+              - --project=k8s-staging-e2e-test-images
+              # This is the same as above, but with -gcb appended.
+              - --scratch-bucket=gs://k8s-staging-e2e-test-images-gcb
+              - --env-passthrough=PULL_BASE_REF
+              - --build-dir=.
+              - test/images
+periodics:
+# NOTE(claudiub): The base image for the Windows E2E test images is nanoserver.
+# In most cases, that is sufficient. But in some cases, we are missing some DLLs.
+# We can fetch those DLLs from Windows servercore images, but they are very large
+# (2GB compressed), while the DLLs are only a few megabytes in size. We can build
+# a monthly DLL cache image and use the cache instead.
+# For more info: https://github.com/kubernetes/kubernetes/pull/93889
+- name: kubernetes-e2e-windows-servercore-cache
+  # Since the servercore image is updated once per month, we only need to build this
+  # cache once per month.
+  interval: 744h
+  cluster: k8s-infra-prow-build-trusted
+  annotations:
+    testgrid-dashboards: sig-testing-images
+  decorate: true
+  spec:
+    serviceAccountName: gcb-builder
+    containers:
+      - image: gcr.io/k8s-testimages/image-builder:v20200901-ab141a0
+        command:
+          - /run.sh
+        args:
+          - --project=k8s-staging-e2e-test-images
+          - --scratch-bucket=gs://k8s-staging-e2e-test-images-gcb
+          - --env-passthrough=PULL_BASE_REF,WHAT
+          - --build-dir=.
+          - test/images
+        # By default, the E2E test image's WHAT is all-conformance. We override that with
+        # the windows-servercore-cache image.
+        env:
+        - name: WHAT
+          value: "windows-servercore-cache"

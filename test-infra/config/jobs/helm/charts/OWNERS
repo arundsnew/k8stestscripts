@@ -1,0 +1,14 @@
+# See the OWNERS docs at https://go.k8s.io/owners
+
+reviewers:
+- foxish
+- mattfarina
+- prydonius
+- unguiculus
+approvers:
+- foxish
+- mattfarina
+- prydonius
+- unguiculus
+emeritus_approvers:
+- viglesiasce

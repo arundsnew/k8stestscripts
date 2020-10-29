@@ -1,0 +1,34 @@
+presubmits:
+  kubernetes/org:
+  - name: pull-org-test-all
+    always_run: true
+    decorate: true
+    labels:
+      preset-service-account: "true"
+      preset-bazel-scratch-dir: "true"
+    spec:
+      containers:
+      - image: gcr.io/k8s-testimages/launcher.gcr.io/google/bazel:v20200824-5d057db-org
+        command:
+        - bazel
+        args:
+        - test
+        - --config=ci
+        - //...
+    annotations:
+      testgrid-num-columns-recent: '30'
+      testgrid-create-test-group: 'true'
+  - name: pull-org-verify-all
+    always_run: true
+    decorate: true
+    labels:
+      preset-service-account: "true"
+      preset-bazel-scratch-dir: "true"
+    spec:
+      containers:
+      - image: gcr.io/k8s-testimages/launcher.gcr.io/google/bazel:v20200824-5d057db-org
+        command:
+        - ./hack/verify-all.sh
+    annotations:
+      testgrid-num-columns-recent: '30'
+      testgrid-create-test-group: 'true'

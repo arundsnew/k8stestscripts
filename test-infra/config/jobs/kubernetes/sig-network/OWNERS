@@ -1,0 +1,18 @@
+# See the OWNERS docs at https://go.k8s.io/owners
+
+reviewers:
+- aojea
+- bowei
+- cadmuxe
+- jingax10
+- mrhohn
+- rramkumar1
+approvers:
+- aojea
+- bowei
+- cadmuxe
+- jingax10
+- mrhohn
+- rramkumar1
+labels:
+- sig/network
